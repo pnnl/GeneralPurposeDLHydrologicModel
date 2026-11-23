@@ -1,5 +1,8 @@
 # General-Purpose Deep Learning Hydrologic Model
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24145836.svg)](https://doi.org/10.5281/zenodo.24145836)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A graph-based deep learning framework for daily streamflow prediction and uncertainty quantification across North American river basins. The model combines a Long Short-Term Memory (**LSTM**) sequence encoder with a Directed Graph Attention Network (**DirectedGAT**) that routes information downstream along river networks, supporting:
 
 1. **Gauged Streamflow Prediction** — Daily deterministic streamflow forecasting at monitored catchments.
@@ -17,7 +20,7 @@ GeneralPurposeDLHydrologicModel/
 │   ├── evaluation/     # Deterministic, probabilistic, and hydrologic signature evaluation
 │   ├── standalone/     # Independently trained baseline models for comparison
 │   └── figures/        # Visualization, spatial mapping, and summary table scripts
-├── data/               # Input datasets from the companion data archive (placed locally)
+├── data/               # Input datasets from the companion Zenodo archive (placed locally)
 ├── weights/            # Pretrained model checkpoints from the companion archive (placed locally)
 └── LICENSE
 ```
@@ -28,7 +31,7 @@ All scripts resolve paths relative to the repository root (`code/training/config
 
 ## Data and Pretrained Weights Setup
 
-Input datasets (`data/`) and pretrained model checkpoints (`weights/`) are distributed separately through the companion Zenodo archive. Download and place `data/` and `weights/` at the root of this repository alongside `code/` before running training or evaluation.
+Processed input datasets (`data/`) and pretrained model checkpoints (`weights/`) are publicly archived on Zenodo at **[https://doi.org/10.5281/zenodo.24145836](https://doi.org/10.5281/zenodo.24145836)**. Download and place `data/` and `weights/` at the root of this repository alongside `code/` before running training or evaluation.
 
 ### Expected `data/` Layout
 
@@ -135,7 +138,7 @@ Scripts in `code/figures/` generate spatial maps, calibration plots, hydroclimat
 | `fig3_calibration_sharpness.py` | Probabilistic calibration and sharpness diagnostics |
 | `fig2_hydroclimate_stratified.py` | Performance stratified by hydroclimatic regime and basin regulation |
 | `plot_consistency_violin.py` | Cross-task consistency distributions |
-| `plot_pretrain_consistency.py` | Pretraining vs. fine-tuning consistency diagnostics |
+| `plot_pretrain_consistency.py` | Pretrained vs. fine-tuning consistency diagnostics |
 | `plot_within_mixture.py` | Mixture component diagnostics |
 | `bootstrap_ci_tables.py` | Bootstrap confidence intervals for summary metrics |
 
@@ -146,6 +149,12 @@ sbatch code/figures/submit_fig3.sh
 ```
 
 > **Note on optional figure inputs:** Certain figure scripts expect generated evaluation outputs in `outputs/` or optional auxiliary reference datasets (such as GAGES-II basin classifications at `data/gagesii/conterm_bas_classif.txt` for regulation stratification, downscaled ensemble outputs for ensemble comparison plots, or custom catchment lists in `code/standalone/hydrograph_catchments.json` for site-level hydrograph plots).
+
+---
+
+## Data Citation
+
+> Konapala, G., Bracken, C., Son, Y., Birnbaum, A., Giovando, J., & Voisin, N. (2026). *MERIT catchment forcings, network, static attributes, and area-checked streamflow for GeneralPurposeDLHydrologicModel (Version 1.0)* [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.24145836
 
 ---
 
