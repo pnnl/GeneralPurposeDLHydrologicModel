@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 """
-Calibration figures for the D2 MDN on the PUB held-out basins (the UQ headline).
+Plot probabilistic calibration diagnostics for the MDN model on held-out basins.
 
-Reads the per-basin eval CSV from evaluate_d2.py (columns cov90/cov95/cov99 are
-the empirical coverages = mean(PIT <= level) per basin) and produces:
+Reads the per-basin evaluation CSV from evaluate_d2.py (columns cov90/cov95/cov99
+store empirical PIT coverage per basin) and generates:
 
-  plots/d2_reliability_diagram.png   — nominal vs observed coverage (the money figure)
+  plots/d2_reliability_diagram.png   — nominal vs. empirical quantile coverage
   plots/d2_pit_histogram.png         — distribution of per-basin coverage at each level
-  plots/d2_crps_cdf.png              — CDF of normalized CRPS across basins (sharpness)
-
-A perfectly calibrated model sits on the 1:1 line in the reliability diagram.
+  plots/d2_crps_cdf.png              — CDF of normalized CRPS across basins
 
 Usage:
-  python plot_calibration_d2.py                                  # frozen by default
-  python plot_calibration_d2.py --csv eval_d2_finetune_heldout_test.csv
+  python code/figures/plot_calibration_d2.py
+  python code/figures/plot_calibration_d2.py --csv outputs/eval_d2_finetune_heldout_test.csv
 """
 import argparse
 from pathlib import Path

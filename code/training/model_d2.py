@@ -1,29 +1,24 @@
 """
-D2 architecture: v24 trunk (LSTM + DirectedGAT) + Mixture Density Network head.
+Probabilistic StreamflowGNN architecture: LSTM-DirectedGAT encoder with a log-normal
+Mixture Density Network (MDN) head.
 
-The head emits the parameters of a K-component LogNormal mixture per node/day:
+The head outputs parameters of a K-component log-normal mixture per catchment and day:
 
     p(y | x) = sum_k  pi_k * LogNormal(y; mu_k, sigma_k)
 
-The mixture *components* are the implicit experts (baseflow / normal / flood
-modes); the mixing weights pi are the implicit gate. There is no discrete switch
--- everything is one differentiable model trained by maximum likelihood (NLL).
+Log-normal components naturally represent non-negative, right-skewed, heavy-tailed
+streamflow regimes (from baseflow to flood peaks) within a single differentiable
+negative log-likelihood (NLL) objective.
 
-Why LogNormal (not Gaussian):
-    streamflow is non-negative, right-skewed and heavy-tailed. A flood component
-    naturally takes a large mu and wide sigma -> fat right tail -> the mixture
-    *expects* extremes, which is exactly the signal a single mean objective
-    cannot encode (the -36% peak underprediction).
+Supported outputs:
+    - Point estimate : closed-form mixture mean
+    - Quantiles      : numerical inversion of the mixture CDF (P10..P99)
+    - Mixture weights: per-component probabilities pi_k
 
-Outputs / deliverables:
-    - point estimate : mixture mean (closed form) -> KGE, matches v24 metric
-    - quantiles      : invert the mixture CDF (P10..P99) -> the D2 deliverable
-    - regime weights : pi per node/day -> interpretable "expert" attribution
-
-Staging (joint training, see train_multi_gpu_d2.py):
-    A. warmup   : freeze trunk, train MDN head only (cheap, hours)
-    B. pretrain : unfreeze trunk, NLL, temporal split on train basins
-    C. finetune : unfreeze trunk, NLL + gauge dropout, PUB basin holdout
+Training stages (see train_multi_gpu_d2.py):
+    1. warmup   : freeze encoder trunk, train MDN head with NLL
+    2. pretrain : unfreeze trunk, train jointly on temporal split (training basins)
+    3. finetune : train with gauge dropout for spatial generalization (held-out basins)
 """
 
 import math
@@ -35,7 +30,7 @@ import torch.nn.functional as F
 
 from model_v15 import StreamflowGNN
 
-# Quantiles we ultimately report (same set as v26 so downstream is unchanged)
+# Default evaluation quantiles
 QUANTILES = [0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99]
 QUANTILE_LABELS = ['p10', 'p25', 'p50', 'p75', 'p90', 'p95', 'p99']
 
@@ -57,7 +52,7 @@ class MixtureDensityHead(nn.Module):
 
     Anchoring mu on log(anchor) means at init (zero MLP weights) every component
     sits near the v24 mean, so the mixture inherits v24's skill on day 0 and only
-    has to *learn spread / modes* -- the same warm-start trick that made v26 stable.
+    has to learn component spread and mixing weights during warmup.
 
     Symmetry breaking: the K components get DISTINCT bias offsets (low/normal/high
     mode), otherwise identical components never differentiate (classic MDN failure).

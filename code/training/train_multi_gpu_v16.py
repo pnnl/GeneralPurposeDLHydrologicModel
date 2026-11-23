@@ -1,36 +1,18 @@
 #!/usr/bin/env python3
 """
-Multi-GPU training v16 — Two-stage PUB pretraining.
+Two-stage temporal-to-spatial training trainer (V16Trainer) for Prediction in
+Ungauged Basins (PUB).
 
-Addresses data leakage in v15: pre-training on all basins then evaluating on
-held-out basins would let the model memorize held-out basin characteristics.
+Two-stage protocol (prevents spatial information leakage into held-out basins):
+  Stage 1 (pretrain): Temporal split on training basins only.
+    - Fixed random split (seed=42, 90% train / 10% held-out basins)
+    - Trains on 1985-2014 and validates on 2015-2019 using training basins only
+    - Held-out evaluation basins are excluded from both training and validation
 
-Two-stage approach:
-  Stage 1 (pretrain): Temporal split on TRAIN basins only.
-    - Basin split (seed=42, fraction=0.9) identifies train/eval basins
-    - Training uses temporal dates (1985-2014) on train basins only
-    - Validation uses temporal holdout (2015-2019) on TRAIN basins only
-    - Eval basins are NEVER seen
-    - No gauge dropout, standard KGE loss, LR=5e-4
-
-  Stage 2 (finetune): Basin holdout PUB evaluation.
-    - Resume model weights only from pretrain (fresh optimizer)
-    - Train on train basins with gauge dropout (0.15)
-    - Validate on held-out eval basins (true PUB evaluation)
-    - All years available for both train/val
-    - Lower LR (1e-4)
-
-Architecture: Same as v15 (LSTM 512x3 + DirectedRiverGNN 256x3 + 6-dim edge features).
-
-Usage:
-    # Stage 1: pretrain (temporal split, train basins only)
-    sbatch submit_v16.sh pretrain
-
-    # Stage 2: finetune for PUB (auto-resumes from pretrain best)
-    sbatch submit_v16.sh finetune
-
-    # Manual finetune from specific pretrain checkpoint
-    sbatch submit_v16.sh finetune --pretrain-checkpoint checkpoints_v16/pretrain_epoch_20.pt
+  Stage 2 (finetune): Spatial generalization with gauge dropout.
+    - Initializes model weights from Stage 1 pretrain checkpoint (fresh optimizer)
+    - Trains on training basins with random gauge dropout masking
+    - Validates on held-out basins for ungauged basin evaluation
 """
 
 import os

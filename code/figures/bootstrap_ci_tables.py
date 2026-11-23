@@ -1,18 +1,9 @@
 #!/usr/bin/env python3
-"""Basin-bootstrap 95% confidence intervals for the headline per-basin medians.
+"""Basin-bootstrap 95% confidence intervals for per-basin median performance metrics.
 
-Pure post-processing over the already-computed per-basin CSVs. Resamples basins with
-replacement (default 5000 iterations, fixed seed) and reports the 2.5/97.5 percentiles
-of the resampled median for each metric. These intervals quantify basin-sampling
-variability ONLY - they are not a significance test of the model against another model,
-and they do not account for temporal autocorrelation within a basin.
-
-Products (all on the PUB spatial holdouts unless noted):
-    H1  supervised basins, in-sample   eval_hydro/head1_gauged_{test,val}_per_basin.csv
-    H2  PUB point estimate             eval_hydro/head2_pub_{test,val}_per_basin.csv
-    H3  PUB MDN (deployed)             eval_hydro/head3_mdn_{test,val}_per_basin.csv
-                                       eval_hydro/head3_ens_metrics_{test,val}.csv (CRPSS)
-    Paired dKGE (H3 - H2) on the matched holdout basins.
+Resamples evaluation basins with replacement (default 5,000 iterations, fixed seed)
+and reports the 2.5th and 97.5th percentiles of the resampled median for each metric.
+Intervals quantify spatial basin-sampling variability across the evaluation set.
 
 Outputs (under outputs/tables/):
     tables/three_head_bootstrap_ci.csv
@@ -67,7 +58,7 @@ CRPSS_METRICS = [("crpss_pt", "CRPSS vs point"), ("crpss_cl", "CRPSS vs climatol
 
 def rows_for_period(period: str, plabel: str):
     out = []
-    # H1 supervised (KGE only - headline)
+    # Gauged deterministic evaluation (KGE)
     h1 = pd.read_csv(ROOT / "outputs" / "eval_hydro" / f"head1_gauged_{period}_per_basin.csv")
     out.append(dict(product="H1 supervised (in-sample)", period=plabel,
                     metric="KGE", **boot_median_ci(h1["kge"].to_numpy())))

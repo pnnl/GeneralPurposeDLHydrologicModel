@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=st-model
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=8
@@ -13,7 +13,7 @@
 # Separately trained point model or mixture, from random weights.
 # Checkpoints: outputs/standalone/checkpoints/{point,mdn}/best_model.pt
 #
-# From zenodo_open_research, after mkdir -p logs:
+# From the repository root, after mkdir -p logs:
 #   sbatch code/standalone/submit_train.sh point
 #   sbatch code/standalone/submit_train.sh mdn
 

@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
 """
-Plot spatial KGE maps comparing v9 and v10 (or any v8+ checkpoint).
+Plot spatial Kling-Gupta Efficiency (KGE) maps from one or two model checkpoints.
 
-Auto-detects model version from checkpoint metadata and loads the correct
-model class and config. Supports side-by-side comparison of two checkpoints.
+Automatically detects model architecture and configuration from checkpoint metadata
+and supports single-model maps or side-by-side checkpoint comparisons.
 
-Usage:
-    # Compare v9 and v10 (default)
-    python plot_spatial_kge.py
-
+Usage (from the repository root):
     # Single checkpoint
-    python plot_spatial_kge.py --checkpoints checkpoints_v9/best_model.pt
+    python code/figures/plot_spatial_kge.py \
+        --checkpoints weights/checkpoints_v24/finetune/best_model.pt
 
-    # Two checkpoints side-by-side
-    python plot_spatial_kge.py --checkpoints checkpoints_v9/best_model.pt checkpoints_v10/best_model.pt
+    # Compare two checkpoints side-by-side
+    python code/figures/plot_spatial_kge.py \
+        --checkpoints weights/checkpoints_v24/pretrain/best_model.pt \
+                      weights/checkpoints_v24/finetune/best_model.pt
 
-    # Faster run with date sampling
-    python plot_spatial_kge.py --sample-rate 0.1
-
-    # Validation only (skip test period)
-    python plot_spatial_kge.py --val-only
+    # Validation period only
+    python code/figures/plot_spatial_kge.py --val-only
 """
 
 import argparse

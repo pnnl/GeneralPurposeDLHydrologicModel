@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 """
-D2 training: v24 trunk + LogNormal Mixture Density head, trained jointly.
+Multi-GPU training for the probabilistic StreamflowGNN-MDN model.
 
-Three stages (run in order, each warm-starts from the previous):
+Supports three sequential training stages:
+    1. warmup   : freeze encoder trunk and train the MDN head on NLL
+    2. pretrain : jointly train encoder and MDN head on training basins (temporal split)
+    3. finetune : fine-tune with gauge dropout for ungauged basin generalization
+                  (pass --freeze-trunk to keep the encoder fixed)
 
-    A. warmup   : freeze trunk, train MDN head only on NLL (cheap, hours)
-                  -> head catches up to the trunk before we disturb it
-    B. pretrain : unfreeze trunk, NLL, TEMPORAL split on TRAIN basins
-                  -> trunk learns peak-relevant features (the part v26/v27/A1
-                     could not reach with a frozen / lightly-tuned trunk)
-    C. finetune : unfreeze trunk, NLL + gauge dropout, PUB basin holdout
-                  -> distributional skill that transfers to ungauged basins
+Validation logs NLL along with median KGE (mixture mean), top-2% peak bias,
+and empirical P90/P95 PIT coverage on evaluation basins.
 
-Validation reports NLL (checkpoint metric) AND, on the eval basins:
-    median KGE (mixture mean)  |  peak bias (top 2% obs)  |  P90/P95 coverage (PIT)
-
-Usage, from the bundle root:
+Usage (from the repository root):
     sbatch code/training/submit_d2.sh warmup
     sbatch code/training/submit_d2.sh pretrain
     sbatch code/training/submit_d2.sh finetune
 
-Warmup starts from weights/checkpoints_v24/finetune/best_model.pt.
 New checkpoints are written under outputs/checkpoints_d2/.
 """
 

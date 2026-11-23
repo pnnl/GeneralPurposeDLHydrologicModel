@@ -1,31 +1,15 @@
 #!/usr/bin/env python3
-"""Figure 2 - hydroclimate-stratified predictive performance (PUB spatial holdouts).
+"""Hydroclimate- and regulation-stratified predictive performance on held-out basins.
 
-Pure post-processing: joins the already-computed per-basin H3 (MDN) metrics to the
-catchment static attributes and reports median / IQR / basin count within aridity and
-snow-fraction groups. No model run, no GPU.
+Joins per-basin evaluation metrics with static catchment attributes to summarize
+medians, interquartile ranges, and basin counts across aridity, snow-fraction,
+drainage-area, and regulation groups.
 
-Main figure (2020-2024 spatial holdouts, 3x4):
-    rows = [aridity groups, snow-fraction groups, drainage-area groups]
-    cols = [KGE, FHV bias (%), CRPSS vs ungauged prediction, P99 upper-quantile coverage]
-
-Supporting Information figure (2x4):
-    row 1 = aridity groups (2015-2019)
-    row 2 = snow-fraction groups (2015-2019)
-
-Inputs, relative to the bundle root:
-    outputs/eval_hydro/head3_mdn_{test,val}_per_basin.csv   kge, fhv, peak_cov99, comid
-    outputs/eval_hydro/head3_ens_metrics_{test,val}.csv     comid, crpss_pt
-    data/static/catchment_static_attributes.parquet         hruid(==comid), aridity, frac_snow, uparea
-
-Outputs (under outputs/):
-    figures/hydroclimate_stratified_performance.pdf   (vector, main text)
-    figures/si_hydroclimate_stratified_extra.pdf       (vector, SI)
-    tables/fig2_stratified_summary.csv                 (group, metric, median, q25, q75, n)
-
-Terminology: "supervised basins", "spatial holdouts", "2015-2019", "2020-2024",
-"upper-quantile coverage". Aridity = Hamon PET / P (higher = drier). Snow fraction =
-fraction of wet days (>0.1 mm) with mean daily temperature < 0 C.
+Inputs (relative to the repository root):
+    outputs/eval_hydro/head3_mdn_{test,val}_per_basin.csv
+    outputs/eval_hydro/head3_ens_metrics_{test,val}.csv
+    data/static/catchment_static_attributes.parquet
+    data/gagesii/conterm_bas_classif.txt (optional, for regulation stratification)
 """
 from __future__ import annotations
 

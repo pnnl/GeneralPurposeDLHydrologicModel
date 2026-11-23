@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=gnn-d2
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=8
@@ -10,11 +10,11 @@
 #SBATCH --output=logs/train_d2_%j.out
 #SBATCH --error=logs/train_d2_%j.err
 
-# D2: v24 trunk plus a lognormal mixture head.
+# Probabilistic training: LSTM-DirectedGAT encoder with a log-normal MDN head.
 # Warmup starts from weights/checkpoints_v24/finetune/best_model.pt.
 # New checkpoints go to outputs/checkpoints_d2 and do not replace weights/.
 #
-# From zenodo_open_research, after mkdir -p logs:
+# From the repository root, after mkdir -p logs:
 #   sbatch code/training/submit_d2.sh warmup
 #   sbatch code/training/submit_d2.sh pretrain
 #   sbatch code/training/submit_d2.sh finetune

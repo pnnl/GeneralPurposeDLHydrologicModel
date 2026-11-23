@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=fig3-calib
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
@@ -11,7 +11,7 @@
 
 # Figure 7 (predictive calibration and sharpness). CPU only.
 # Reads outputs/predictions_downscaled/ens100_wrftgw_2015_2024.zarr, which is not
-# included in this bundle, and the observation parquets under outputs/.
+# included in this repository, and the observation parquets under outputs/.
 
 set -euo pipefail
 

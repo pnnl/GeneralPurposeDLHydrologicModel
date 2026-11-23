@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=gnn-v24
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=8
@@ -10,9 +10,9 @@
 #SBATCH --output=logs/train_v24_%j.out
 #SBATCH --error=logs/train_v24_%j.err
 
-# GNN training v24. New runs write outputs/checkpoints_v24 and leave weights/ in place.
+# Deterministic LSTM-DirectedGAT training. New runs write outputs/checkpoints_v24 and leave weights/ in place.
 #
-# From zenodo_open_research, after mkdir -p logs:
+# From the repository root, after mkdir -p logs:
 #   sbatch code/training/submit_v24.sh pretrain
 #   sbatch code/training/submit_v24.sh finetune
 #

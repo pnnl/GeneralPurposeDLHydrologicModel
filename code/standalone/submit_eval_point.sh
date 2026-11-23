@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=st-eval-point
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=1

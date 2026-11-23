@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Score KGE parts and hydrologic signatures vs observations.
+"""Score KGE components and hydrologic signatures against observations (2020-2024).
 
-Three products, test period 2020-2024:
-  head1_gauged   : v24 pretrain  on TRAIN basins
-  head2_pub      : v24 finetune  on HOLDOUT basins
-  head3_mdn      : D2 frozen mixture mean on HOLDOUT basins
-                   (optional daily parquet; otherwise skip head 3)
+Evaluates:
+  - Gauged deterministic predictions on training basins
+  - Ungauged deterministic predictions on held-out basins
+  - Optional probabilistic mixture-mean daily predictions on held-out basins
 
-Usage, from the bundle root:
+Usage (from the repository root):
   python code/evaluation/evaluate_hydro_signatures.py --gnn-root .
 """
 

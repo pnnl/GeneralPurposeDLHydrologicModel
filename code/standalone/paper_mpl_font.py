@@ -1,4 +1,4 @@
-"""Match figure text to the manuscript's Computer Modern roman."""
+"""Configure Matplotlib to render figures with Latin Modern Roman typography."""
 
 from pathlib import Path
 

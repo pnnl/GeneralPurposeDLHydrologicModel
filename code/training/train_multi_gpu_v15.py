@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
 """
-Multi-GPU training v15 — Directed message passing + PUB basin holdout.
+Core multi-GPU data loading, loss functions, and distributed training utilities
+for river-network Graph Neural Network streamflow modeling.
 
-Key changes from v10:
-1. DirectedRiverGNN: separate upstream/downstream GATConv layers per hop
-2. Edge features (6-dim): upstream_area_ratio, elev_diff, distance_km, slope, order_diff, local_area_ratio
-3. PUB training: basin holdout split with optional gauge dropout masking
-
-Usage:
-    # Standard v15 PUB training
-    sbatch submit_v15.sh
-
-    # Pure spatial PUB split (80% train basins / 20% holdout basins)
-    sbatch submit_v15.sh --split-mode basin --train-basin-fraction 0.8
-
-    # With MSE warmup
-    sbatch submit_v15.sh --warmup-epochs 5
-
-    # Resume
-    sbatch submit_v15.sh --resume-best
+Provides:
+- RollingKGELoss: differentiable Kling-Gupta Efficiency loss in discharge space
+- SequenceDataModule: shared-memory Zarr forcing loader, directed river graph
+  builder, static attribute normalizer, and streamflow target cache
+- Distributed Data Parallel (DDP) setup, synchronization, and checkpoint helpers
 """
 
 import os
@@ -58,7 +47,7 @@ from model_v15 import StreamflowGNN, count_parameters
 
 
 # ============================================================================
-# Rolling KGE Loss (real-space, same as v8)
+# Rolling KGE Loss (discharge space)
 # ============================================================================
 
 class RollingKGELoss(nn.Module):
@@ -192,7 +181,7 @@ class RollingNSELoss(nn.Module):
 
 
 # ============================================================================
-# Distributed Utilities (same as v8)
+# Distributed Utilities
 # ============================================================================
 
 def setup_distributed():
@@ -288,13 +277,13 @@ class SequenceDataModule:
     """
     Data module for v15 day-by-day LSTM training with directed edges and edge features.
 
-    Changes from v10:
+    Features:
     - Builds directed (upstream/downstream) edges instead of bidirectional
     - Computes 6 edge features per directed edge
     - get_subgraph_directed_edges() returns separate up/down edge_index + edge_attr
     """
 
-    # Gage quality thresholds (same as v8)
+    # Gauge quality thresholds
     MIN_COVERAGE = 0.25
     MIN_MEAN_FLOW_CMS = 0.15
 
@@ -455,7 +444,7 @@ class SequenceDataModule:
         log(f"  lstm_input_dim set to: {config.model.lstm_input_dim} ({len(config.data.forcing_vars)} forcing + {self.n_static_features} static)")
 
     def _load_forcings(self, config: Config):
-        """Load forcing data into shared memory (same as v8)."""
+        """Load forcing data into POSIX shared memory across ranks."""
         log("Loading forcing data...")
 
         processed_dir = config.data.base_dir / config.data.forcings_processed_dir
@@ -693,7 +682,7 @@ class SequenceDataModule:
         log("Loading streamflow (quality-filtered, area-normalized)...")
 
         streamflow_dir = config.data.base_dir / config.data.streamflow_dir
-        self.streamflow_cache = {}       # specific_discharge_mm_day (raw, same as v8)
+        self.streamflow_cache = {}       # specific_discharge_mm_day
         self.gauged_nodes = []
 
         n_loaded = 0
@@ -1037,10 +1026,10 @@ class RollingLossTrainer:
     """
     Trainer v15 — Kratzert-style LSTM + DirectedRiverGNN with edge features.
 
-    Key changes from v10:
+    Key features:
     - Directed message passing: separate upstream/downstream GATConv layers
     - Edge features (6-dim): area ratio, elev diff, distance, slope, order diff, area ratio (local)
-    - Same loss functions and training strategy as v10
+    - Rolling KGE loss with optional warmup schedule
     """
 
     def __init__(

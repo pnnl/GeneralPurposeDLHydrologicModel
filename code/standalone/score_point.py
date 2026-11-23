@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Paired point metrics with the paper Head 2 scoring function."""
+"""Compute paired deterministic performance metrics on held-out basins."""
 
 import json
 import sys

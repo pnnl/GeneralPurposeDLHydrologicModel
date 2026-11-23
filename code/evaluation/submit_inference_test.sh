@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=gnn-infer-test
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
@@ -10,8 +10,8 @@
 #SBATCH --output=logs/inference_test_%j.out
 #SBATCH --error=logs/inference_test_%j.err
 
-# Test-period (2020-2024) inference for the three-product table.
-# From zenodo_open_research, after mkdir -p logs:
+# Test-period (2020-2024) deterministic streamflow inference.
+# From the repository root, after mkdir -p logs:
 #   sbatch code/evaluation/submit_inference_test.sh v24 \
 #       weights/checkpoints_v24/pretrain/best_model.pt \
 #       outputs/predictions_v24_pretrain_test.parquet

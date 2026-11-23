@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """
-Multi-GPU training v24 — GNN (v20 architecture) with area-verified streamflow.
+Main multi-GPU training entry point for the deterministic LSTM-DirectedGAT model.
 
-Same as v20 (LSTM+DirectedGAT, curated 40-feature attributes, WRF TGW forcings) but:
-  - MERIT streamflow in data/streamflow
-  - WRF TGW forcings (8 vars)
-  - LSTM input: forcings(8) + static(40) = 48
+Uses the 8-variable daily catchment forcings, curated 40 static catchment attributes,
+directed river-network graph topology, and quality-controlled streamflow observations
+in data/streamflow/.
 
-Two-stage PUB training:
-  Stage 1 (pretrain): Temporal split on TRAIN basins only
-  Stage 2 (finetune): Basin holdout PUB evaluation
+Two-stage training protocol:
+  1. pretrain : Temporal training (1985-2014) and validation (2015-2019) on training basins
+  2. finetune : Spatial fine-tuning with gauge dropout, validated on held-out basins
 
-Usage, from the bundle root:
+Usage (from the repository root):
     sbatch code/training/submit_v24.sh pretrain
-    sbatch submit_v24.sh finetune
+    sbatch code/training/submit_v24.sh finetune
 """
 
 import os

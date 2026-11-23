@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=d2-eval
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus=8
@@ -10,8 +10,8 @@
 #SBATCH --output=logs/eval_d2_%j.out
 #SBATCH --error=logs/eval_d2_%j.err
 
-# Evaluate a D2 mixture checkpoint.
-# From zenodo_open_research, after mkdir -p logs:
+# Evaluate a probabilistic Mixture Density Network (MDN) checkpoint.
+# From the repository root, after mkdir -p logs:
 #   sbatch code/evaluation/submit_eval_d2.sh weights/checkpoints_d2/pretrain/best_model.pt
 #   sbatch code/evaluation/submit_eval_d2.sh weights/checkpoints_d2/finetune_frozen/best_model.pt --basin-set heldout
 # Extra arguments after the checkpoint are forwarded to evaluate_d2.py.

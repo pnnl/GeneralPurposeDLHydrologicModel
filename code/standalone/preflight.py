@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check dependencies, architecture and paper inputs before GPU allocation."""
+"""Verify Python dependencies, model definitions, and required input files before training."""
 
 import json
 import sys

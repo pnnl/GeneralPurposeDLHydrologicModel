@@ -1,25 +1,21 @@
 #!/usr/bin/env python3
 """
-Spatial UQ maps for the D2 MDN on the PUB held-out basins (the §5 figure that
-shows the uncertainty quantification *transfers spatially* to ungauged basins,
-not just as a national median).
+Plot spatial uncertainty quantification maps for the MDN model across the 965 held-out basins.
 
-Three panels, each a per-basin scatter over CONUS:
-  1. Extreme bracketing  (peak_cov99): fraction of top-2% flood days the P99
-     mixture quantile brackets  -- target = high (the tail should catch floods).
-  2. Calibration         (cov95):      empirical P95 coverage  -- target = 0.95.
-  3. Sharpness           (crps_norm):   CRPS / mean obs flow    -- lower is better.
+Generates a three-panel map over North America:
+  1. High-flow coverage (peak_cov99): fraction of top-2% peak-flow days bracketed by P99
+  2. Calibration        (cov95):      empirical P95 coverage (nominal target = 0.95)
+  3. Sharpness          (crps_norm):  CRPS normalized by mean observed flow
 
-Basins are the 965 PUB held-out comids; the eval CSV keys on node_idx, so we map
-node -> comid via weights/checkpoints_v24/finetune/split_metadata.json (eval_node_indices
-<-> eval_comids, same order) and join centroids from catchment_network.gpkg.
+Maps evaluation node indices to catchment COMIDs via split_metadata.json and joins
+catchment centroids from catchment_network.gpkg.
 
 Outputs:
   plots/d2_spatial_uq.png
 
 Usage:
-  python plot_spatial_d2_uq.py                                  # frozen by default
-  python plot_spatial_d2_uq.py --csv eval_d2_finetune_heldout_test.csv
+  python code/figures/plot_spatial_d2_uq.py
+  python code/figures/plot_spatial_d2_uq.py --csv outputs/eval_d2_finetune_heldout_test.csv
 """
 import argparse
 import json

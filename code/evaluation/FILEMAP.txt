@@ -1,32 +1,41 @@
-Code-to-section map (Data / Methods / Evaluation)
+Repository Module Overview
 
-Data
-  standardize_streamflow.py          USGS/HYDAT/CONAGUA -> comid_*.parquet
-  ../downloadgagedata.py             area-ratio filter 0.7-1.3
-  catchmentforcings.py               raw WRF 6-hourly -> daily HRUID parquet
-  preprocess_forcings_hruid.py       parquet -> forcings.zarr / forcings_f16.zarr
-  extract_static_attributes.py       VIC + MERIT -> static parquet
-  train_multi_gpu_v20.py             DROP_FEATURES / LOG_TRANSFORM_FEATURES (40)
+Training (code/training/)
+  config.py                          Model, data, and training configuration dataclasses
+  model_v15.py                       StreamflowGNN (LSTM temporal encoder + DirectedRiverGNN)
+  model_d2.py                        MixtureDensityHead and StreamflowGNNMDN (log-normal mixture, NLL, PIT, CRPS)
+  train_multi_gpu_v15.py             SequenceDataModule, RollingKGELoss, directed graph batching, DDP utilities
+  train_multi_gpu_v16.py             Two-stage training trainer (temporal pretraining -> spatial PUB fine-tuning)
+  train_multi_gpu_v17.py             Alternative regionalization architectures (EA-LSTM, decoupled GNN, contrastive)
+  train_multi_gpu_v20.py             Curated 40-attribute static feature pipeline (SequenceDataModuleV20)
+  train_multi_gpu_v24.py             Main deterministic training entry point (submit_v24.sh)
+  train_multi_gpu_d2.py              Main probabilistic MDN training entry point (submit_d2.sh)
 
-Methodology
-  model_v15.py                       StreamflowGNN = LSTM + DirectedGAT
-  train_multi_gpu_v24.py             pretrain (temporal) then PUB finetune
-  train_multi_gpu_v15.py             SequenceDataModule, RollingKGELoss, directed edges
-  model_d2.py                        MixtureDensityHead, NLL / mean / PIT / CRPS
-  train_multi_gpu_d2.py              warmup -> pretrain -> PUB finetune [--freeze-trunk]
-  submit_v24.sh  submit_d2.sh        8 x H100 launchers
+Evaluation (code/evaluation/)
+  inference_v24_v25.py               Deterministic test-period streamflow inference (submit_inference_test.sh)
+  evaluate_d2.py                     Probabilistic MDN evaluation: KGE, PIT coverage, peak bracketing, CRPS (submit_eval_d2.sh)
+  hydro_signatures.py                KGE decomposition and flow-duration / seasonal hydrologic signatures
+  evaluate_hydro_signatures.py       Per-basin hydrologic signature evaluation (submit_hydro_eval.sh)
+  evaluate_hydro_from_ens_zarr.py    Full-period ensemble signature and probabilistic evaluation from Zarr
+  build_3head_table.py               Summary table across gauged deterministic, ungauged deterministic, and probabilistic tasks
 
-Evaluation
-  inference_v24_v25.py               v24 Head 1 / Head 2 test parquets
-  evaluate_d2.py                     Head 3: KGE, PIT, peak bracketing, CRPS
-  build_3head_table.py               matched Table 1
-  plot_calibration_d2.py             reliability, PIT, CRPS
-  plot_spatial_d2_uq.py              spatial UQ on 630 holdouts
-  plot_spatial_kge.py                spatial KGE maps
-  make_three_stage_figure.py         three-task schematic
+Standalone Baselines (code/standalone/)
+  train_standalone.py                Train independent deterministic and probabilistic models from random initialization
+  score_point.py                     Paired deterministic comparison against the shared-encoder model
+  score_point_in_mixture.py          Consistency diagnostics between deterministic predictions and mixture quantiles
+  pair_span.py                       Paired multi-year evaluation summaries
+  save_hydrograph_daily.py           Site-level daily hydrograph extraction
 
-Official numbers
-  three_head_table.csv
-  eval_d2_finetune_frozen_heldout_test.summary.json
-  eval_d2_finetune_heldout_test.summary.json
-  checkpoints_v24/finetune/split_metadata.json
+Figures and Tables (code/figures/)
+  architecture/model_structure.tex   Model architecture diagram source (LaTeX/TikZ)
+  plot_study_domain.py               Study domain and stream gauge map
+  plot_spatial_kge.py                Spatial KGE performance maps
+  plot_head12_hydro.py               Deterministic skill and hydrologic signature maps/distributions
+  plot_spatial_d2_uq.py              Spatial probabilistic calibration and sharpness maps on 965 held-out basins
+  plot_calibration_d2.py             Reliability diagram, PIT coverage, and normalized CRPS distributions
+  fig3_calibration_sharpness.py      Ensemble PIT histogram, interval reliability, sharpness, and peak coverage
+  fig2_hydroclimate_stratified.py    Performance stratified by aridity, snow fraction, drainage area, and regulation
+  plot_consistency_violin.py         Cross-task agreement distributions (shared encoder vs. standalone baselines)
+  plot_pretrain_consistency.py       Pretrained vs. spatially fine-tuned prediction consistency
+  plot_within_mixture.py             CDF diagnostics of deterministic predictions within mixture intervals
+  bootstrap_ci_tables.py             Basin-bootstrap 95% confidence intervals for summary metrics

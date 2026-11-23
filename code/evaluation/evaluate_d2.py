@@ -1,28 +1,23 @@
 """
-Evaluate a trained D2 (MDN) checkpoint on the TEST period.
+Evaluate a trained Mixture Density Network (MDN) checkpoint on the test or validation period.
 
-Produces the full evaluation picture for the mixture model:
+Computes three groups of per-basin metrics:
+  1. Point accuracy (closed-form mixture mean):
+        per-basin KGE (and r, alpha, beta), NSE, and top-2% peak flow bias
+  2. Probabilistic calibration:
+        empirical PIT coverage at nominal P90 / P95 / P99 levels
+  3. High-flow tail coverage:
+        fraction of top-2% observed peak-flow days bracketed by the P95 / P99
+        mixture quantiles, plus Continuous Ranked Probability Score (CRPS).
 
-  1. POINT accuracy (mixture mean -> single number, comparable to v24):
-        per-basin KGE (+ r/alpha/beta), NSE, peak bias (top-2%)
-  2. CALIBRATION (the new capability):
-        PIT-based coverage at P90 / P95 / P99 (target = the level)
-  3. EXTREME COVERAGE (D2's actual value proposition):
-        on the top-2% peak days, fraction of obs bracketed by the P95 / P99
-        mixture quantile -- i.e. does the upper tail *cover* the flood even
-        when the mean underpredicts it.
-
-Reuses D2Trainer's data module, _prepare_sequence_batch, _forward_sequence and
-the model_d2 mixture helpers, so metric definitions match the training logs.
-
-Usage, from the bundle root:
+Usage (from the repository root):
     torchrun --standalone --nproc_per_node=8 code/evaluation/evaluate_d2.py \
-        --checkpoint weights/checkpoints_d2/pretrain/best_model.pt \
-        --basin-set heldout --years test --output outputs/eval_d2_pretrain.csv
+        --checkpoint weights/checkpoints_d2/finetune_frozen/best_model.pt \
+        --basin-set heldout --years test --output outputs/eval_d2_finetune_frozen_heldout_test.csv
 
-  --basin-set train    : in-sample basins (temporal generalization)   [default for pretrain]
-  --basin-set heldout  : PUB held-out basins (spatial generalization)  [the headline for finetune]
-  --years      test    : 2020-2024 (default)   |  val : 2015-2019
+  --basin-set train    : training basins (temporal generalization)
+  --basin-set heldout  : held-out ungauged basins (spatial generalization)
+  --years     test     : 2020-2024 (default) | val : 2015-2019
 """
 
 import argparse

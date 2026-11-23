@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=hydro-eval-3head
-# Submit from zenodo_open_research. Set --account and --partition for your cluster.
+# Submit from the repository root. Set --account and --partition for your cluster.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16

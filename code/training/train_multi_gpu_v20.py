@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 """
-Multi-GPU training v20 — v16's LSTM+DirectedGAT with curated 40-feature attributes.
+Curated 40-attribute static catchment feature pipeline (SequenceDataModuleV20).
 
-Changes from v19 (51 features):
-  - Drops 11 problematic features (categoricals, redundant, near-constant)
-  - Log-transforms 6 heavily skewed features before z-scoring
-  - 40 features, LSTM input: forcings(8) + static(40) = 48
-
-Two-stage PUB training (same as v16/v19):
-  Stage 1 (pretrain): Temporal split on TRAIN basins only
-  Stage 2 (finetune): Basin holdout PUB evaluation
-
-Usage:
-    sbatch submit_v20.sh pretrain
-    sbatch submit_v20.sh finetune
+Extends SequenceDataModule with feature selection and preprocessing:
+  - Excludes categorical, redundant, and near-constant static columns
+  - Applies log1p transformation to heavily skewed physiographic attributes prior to z-scoring
+  - Produces 48-channel node inputs: 8 meteorological forcings + 40 static attributes
 """
 
 import os
@@ -77,7 +69,7 @@ class SequenceDataModuleV20(SequenceDataModule):
     """V20 data module: curated features with log-transforms."""
 
     def _load_static_features(self, config):
-        """Load static features with curation: drop problematic features, log-transform skewed ones."""
+        """Load static catchment attributes with feature selection and log-transform preprocessing."""
         log("Loading static features (V20 curated)...")
 
         v2_path = config.data.base_dir / "data" / "static" / "catchment_static_attributes_v2.parquet"
@@ -124,7 +116,7 @@ class SequenceDataModuleV20(SequenceDataModule):
                 log(f"  Dropping constant feature: {col}")
         feature_cols = non_constant_cols
 
-        # V20: Drop problematic features
+        # Exclude categorical, redundant, and near-constant features
         dropped = [c for c in feature_cols if c in DROP_FEATURES]
         feature_cols = [c for c in feature_cols if c not in DROP_FEATURES]
         log(f"  Dropped {len(dropped)} features: {dropped}")
@@ -261,7 +253,7 @@ def main():
 
     data_module = SequenceDataModuleV20(config, rank, world_size, warmup_days=args.warmup_days)
 
-    # Stage-specific date and basin logic (same as v16/v19)
+    # Stage-specific date and basin split configuration
     if args.stage == 'pretrain':
         train_dates = build_date_list(config.data.train_years)
         val_dates = build_date_list(config.data.val_years)

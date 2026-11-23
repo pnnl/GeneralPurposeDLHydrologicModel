@@ -1,30 +1,23 @@
 #!/usr/bin/env python3
-"""Manuscript Figure 7 - predictive calibration and sharpness.
+"""Predictive calibration and sharpness diagnostics from ensemble streamflow predictions.
 
-Recomputes per-day probability-integral-transform (PIT), two-sided central-interval
-reliability, sharpness, and peak-conditioned upper-quantile coverage from the stored
-100-member ensemble - no model run, no GPU (CPU pass over the zarr).
+Computes per-day probability integral transform (PIT), central-interval reliability,
+sharpness, and peak-conditioned upper-quantile coverage on the 965 held-out basins.
 
-Source ensemble: outputs/predictions_downscaled/ens100_wrftgw_2015_2024.zarr
-    ensemble [n_catch, n_days, 100] f16 cms, comid, hruid, dates(int64 ns)
-    This zarr is not included in the bundle.
-Observations: outputs/predictions_v24_finetune_test.parquet (2020-2024),
-              outputs/predictions_v24_val.parquet (2015-2019)  -> obs_cms by (comid, date)
-Holdout basins: weights/checkpoints_d2/finetune_frozen/split_metadata.json -> eval_comids (965)
+Inputs (relative to the repository root):
+    Ensemble store : outputs/predictions_downscaled/ens100_wrftgw_2015_2024.zarr
+    Observations   : outputs/predictions_v24_finetune_test.parquet (2020-2024),
+                     outputs/predictions_v24_val.parquet (2015-2019)
+    Holdout split  : weights/checkpoints_d2/finetune_frozen/split_metadata.json
 
 Panels:
-    (a) real PIT histogram, 20 bins over [0,1], each basin weighted equally, both
-        periods + uniform expectation + basin-bootstrap band
-    (b) central-interval reliability - empirical vs nominal for 50/80/90/98% intervals
-    (c) sharpness - median normalized central-interval width vs nominal coverage
-    (d) peak-conditioned reliability - P95 and P99 upper-quantile coverage for all days
-        and the highest 20/10/5/2/1% of observed flows
-
-A descriptive KS statistic against the uniform is annotated (no pooled p-value, which
-would be invalid under within-basin temporal dependence).
+    (a) Equal-basin-weighted PIT histogram (20 bins over [0, 1]) with bootstrap band
+    (b) Central-interval reliability (50%, 80%, 90%, and 98% nominal intervals)
+    (c) Sharpness (median normalized interval width vs. nominal coverage)
+    (d) Peak-conditioned P95 and P99 upper-quantile coverage across flow percentiles
 
 Outputs (under outputs/):
-    figures/predictive_calibration_sharpness.pdf   (vector, main text)
+    figures/predictive_calibration_sharpness.pdf
     tables/fig3_pit_bins.csv
     tables/fig3_interval_reliability.csv
     tables/fig3_peak_coverage.csv
@@ -83,7 +76,7 @@ def _style_ax(ax):
     ax.spines["right"].set_visible(False)
     ax.grid(True, axis="y", color="#E2E2E2", lw=0.6, zorder=0)
     ax.set_axisbelow(True)
-    # Matplotlib point sizes print about a third larger than the manuscript's
+    # Scale Matplotlib font sizes to match LaTeX column typography
     # 10 pt Computer Modern, so 7.5 pt here matches the narrative.
     ax.tick_params(length=2.8, width=0.6, labelsize=7.2, color="#444444")
     ax.xaxis.label.set_size(7.5)

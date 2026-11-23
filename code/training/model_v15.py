@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 """
-GNN model v15 — Directed message passing with edge features.
+StreamflowGNN architecture: per-catchment LSTM temporal encoder coupled with a
+directed Graph Attention Network (DirectedRiverGNN) over river networks.
 
-Same architecture as v14, packaged for v15 PUB training.
-Key features:
-- DirectedRiverGNN replaces RiverGNN: separate GATConvs for upstream and downstream
-- Edge features (6-dim) modulate attention weights in GATConv
-- Forward signature accepts directed edge indices + edge attributes
-- Gated up/down combiner (learned directional weighting)
-- LSTM→output skip connection (pre-GNN concat post-GNN)
-- Static feature injection into GNN pathway
-- Clean output head (no dropout before final prediction)
+Key architectural components:
+- DirectedRiverGNN: separate upstream and downstream GATConv layers per hop
+- 6-dimensional physical edge attributes modulating graph attention weights
+- Learned sigmoid gate combining upstream and downstream message pathways
+- Skip connection concatenating pre-GNN LSTM states with post-GNN representations
+- Static catchment attribute conditioning in both temporal and spatial pathways
 """
 
 import torch

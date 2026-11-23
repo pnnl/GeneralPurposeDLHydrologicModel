@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the exact paper holdout COMIDs for point inference."""
+"""Export held-out evaluation catchment COMIDs from split_metadata.json to CSV."""
 
 import csv
 import json

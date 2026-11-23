@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
-Inference for v24 (DirectedGAT) and v25 (EA-LSTM) models on test period (2020-2024).
+Run deterministic streamflow inference across gauged catchment nodes on a target period.
 
-Loads the v24 or v25 finetune best_model.pt, runs predictions for all gauged nodes
-across the test period, and saves to parquet.
+Loads a trained checkpoint (DirectedGAT or EA-LSTM baseline), generates daily
+predictions across the river network, and writes results to Parquet.
 
-Usage, from the bundle root:
-    python code/evaluation/inference_v24_v25.py --version v24 --checkpoint weights/checkpoints_v24/finetune/best_model.pt
+Usage (from the repository root):
+    python code/evaluation/inference_v24_v25.py \
+        --version v24 \
+        --checkpoint weights/checkpoints_v24/finetune/best_model.pt \
+        --output outputs/predictions_v24_finetune_test.parquet
 
-    # Optional: predict for specific nodes only (e.g., NWM-comparable subset)
-    python inference_v24_v25.py --version v24 --checkpoint ... --nodes-csv nwm_comparable_comids.csv
+    # Optional: restrict output to a subset of catchment COMIDs
+    python code/evaluation/inference_v24_v25.py \
+        --version v24 --checkpoint ... --nodes-csv subset_comids.csv
 """
 
 import argparse

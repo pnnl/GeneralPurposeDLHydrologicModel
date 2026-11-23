@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train independent point and probabilistic encoders on the paper split."""
+"""Train standalone deterministic and probabilistic baseline models from scratch."""
 
 import argparse
 import json

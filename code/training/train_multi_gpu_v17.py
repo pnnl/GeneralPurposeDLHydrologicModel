@@ -1,31 +1,13 @@
 #!/usr/bin/env python3
 """
-Multi-GPU training v17 — PUB-oriented architectures.
+Regionalization baseline architectures for Prediction in Ungauged Basins (PUB).
 
-Three model variants designed for Prediction in Ungauged Basins:
-  - ea-lstm: Entity-Aware LSTM (static attributes modulate input gate)
-  - decoupled-gnn: GNN on static attributes only (LSTM never mixed by GNN)
-  - contrastive-pub: Contrastive pretrained basin encoder + LSTM
+Implements three comparative model variants:
+  - ea-lstm         : Entity-Aware LSTM (static catchment attributes modulate input gate)
+  - decoupled-gnn   : GNN operating on static attributes decoupled from temporal LSTM states
+  - contrastive-pub : Contrastively pretrained catchment encoder coupled with LSTM
 
-All variants use two-stage training (v13 showed direct basin holdout fails):
-  Stage 1 (pretrain): Temporal split on TRAIN basins only
-  Stage 2 (finetune): Basin holdout PUB evaluation
-
-The contrastive-pub variant adds Stage 0 (contrastive pretraining of basin encoder).
-
-Usage:
-    # EA-LSTM
-    sbatch submit_v17.sh ea-lstm pretrain
-    sbatch submit_v17.sh ea-lstm finetune
-
-    # Decoupled GNN
-    sbatch submit_v17.sh decoupled-gnn pretrain
-    sbatch submit_v17.sh decoupled-gnn finetune
-
-    # Contrastive PUB
-    sbatch submit_v17.sh contrastive-pub contrastive   # Stage 0
-    sbatch submit_v17.sh contrastive-pub pretrain       # Stage 1
-    sbatch submit_v17.sh contrastive-pub finetune       # Stage 2
+All variants follow the two-stage pretraining and spatial fine-tuning protocol.
 """
 
 import os

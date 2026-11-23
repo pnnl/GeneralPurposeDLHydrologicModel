@@ -17,7 +17,7 @@ def _bundle_root() -> Path:
 @dataclass
 class DataConfig:
     """Data paths and parameters."""
-    # Paths are relative to the bundle root (the directory that contains code/).
+    # Paths are relative to the repository root (the directory that contains code/).
     base_dir: Path = field(default_factory=_bundle_root)
     catchment_network: Path = field(default_factory=lambda: Path("data/catchment_network/catchment_network.gpkg"))
     # Full MERIT delineation. Not included. The forcing store is indexed by hruid.
@@ -25,7 +25,7 @@ class DataConfig:
     # Raw VIC parameters are not included.
     static_params: Path = field(default_factory=lambda: Path("data/static/namerica_params.nc"))
     forcings_dir: Path = field(default_factory=lambda: Path("data/forcings_processed_hruid"))
-    # Preprocessed forcings zarr store. This bundle ships the float16 store only.
+    # Preprocessed daily catchment forcings Zarr store (float16).
     forcings_processed_dir: Path = field(default_factory=lambda: Path("data/forcings_processed_hruid"))
     streamflow_dir: Path = field(default_factory=lambda: Path("data/streamflow"))
 
@@ -453,7 +453,7 @@ def get_config_v21() -> Config:
     Configuration for v21: EA-LSTM with v20's curated 40-feature attributes.
 
     Same as v17 (PUB architectures) but with v20's curated features:
-    - Drops 11 problematic features (categoricals, redundant, near-constant)
+    - Excludes 11 categorical/redundant features (categoricals, redundant, near-constant)
     - Log-transforms 6 heavily skewed features before z-scoring
     - 40 features instead of 51. LSTM input: forcings(8) + static(40) = 48.
     """
@@ -474,7 +474,7 @@ def get_config_v20() -> Config:
     Configuration for v20: v16 LSTM+DirectedGAT with curated 40-feature attributes.
 
     Same architecture as v16/v19. Changes from v19:
-    - Drops 11 problematic features (categoricals, redundant, near-constant)
+    - Excludes 11 categorical/redundant features (categoricals, redundant, near-constant)
     - Log-transforms 6 heavily skewed features before z-scoring
     - 40 features instead of 51. LSTM input: forcings(8) + static(40) = 48.
     """

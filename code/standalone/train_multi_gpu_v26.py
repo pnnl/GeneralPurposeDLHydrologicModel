@@ -1,4 +1,4 @@
-"""Compatibility helper imported by the paper MDN trainer."""
+"""Utility to strip DDP and torch.compile prefixes when loading checkpoint state dicts."""
 
 
 def normalize_state_dict(state_dict):

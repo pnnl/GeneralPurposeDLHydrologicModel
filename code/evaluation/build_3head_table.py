@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 """
-Build the unified 3-head results table for the paper, all on the TEST period
-(2020-2024), matched protocol:
+Build a unified evaluation summary table on the 2020-2024 test period across:
 
-  Head 1 (gauged)  : v24 pretrain  -> evaluated on TRAIN basins (in-sample, temporal generalization)
-  Head 2 (PUB)     : v24 finetune  -> evaluated on the 965 PUB held-out basins
-  Head 3 (MDN)     : D2 frozen     -> evaluated on the 965 PUB held-out basins (mixture mean for point skill)
+  1. Gauged deterministic    : temporally pretrained model evaluated on training basins
+  2. Ungauged deterministic  : spatially fine-tuned model evaluated on 965 held-out basins
+  3. Ungauged probabilistic  : MDN model evaluated on 965 held-out basins
 
-For Heads 1/2 we read the inference parquets and compute per-basin KGE + top-2%
-peak bias here. For Head 3 we read the D2 eval .summary.json produced by evaluate_d2.py.
+Reads deterministic inference parquets for tasks 1-2 and the summary JSON from
+evaluate_d2.py for task 3.
 
 Outputs:
-  three_head_table.csv   (one row per head, point + distributional columns)
-  three_head_table.md    (paper-ready markdown)
+  three_head_table.csv
+  three_head_table.md
 """
 import json
 import sys

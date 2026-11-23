@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-"""Figure 1: MERIT river network + gauges used in this study.
+"""Plot the MERIT river network and quality-controlled stream gauge locations.
 
-All quality-filtered gauges (training + held-out) are drawn as a single
-set. There is no v20 / v24 split.
-
-Usage, from the bundle root:
+Usage (from the repository root):
     python code/figures/plot_study_domain.py
     python code/figures/plot_study_domain.py --dpi 200
 """
