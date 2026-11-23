@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "GeneralPurposeDLHydrologicModel: Shared Graph-Recurrent Deep Learning Hydrologic Model"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/pnnl/GeneralPurposeDLHydrologicModel"
+authors:
+  - family-names: Konapala
+    given-names: Goutam
+    affiliation: Pacific Northwest National Laboratory
+  - family-names: Bracken
+    given-names: Cameron
+    affiliation: Pacific Northwest National Laboratory
+  - family-names: Son
+    given-names: Youngjun
+    affiliation: Pacific Northwest National Laboratory
+  - family-names: Birnbaum
+    given-names: Abigail
+    affiliation: Pacific Northwest National Laboratory
+  - family-names: Giovando
+    given-names: Jeremy
+    affiliation: Pacific Northwest National Laboratory
+  - family-names: Voisin
+    given-names: Nathalie
+    affiliation: Pacific Northwest National Laboratory

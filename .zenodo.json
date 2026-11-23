@@ -1,0 +1,49 @@
+{
+  "upload_type": "software",
+  "title": "GeneralPurposeDLHydrologicModel: Shared Graph-Recurrent Deep Learning Hydrologic Model",
+  "description": "<p>Training, evaluation, standalone baseline, and figure-generation source code for GeneralPurposeDLHydrologicModel, a graph-recurrent deep learning framework (LSTM + DirectedGAT + Mixture Density Network) for daily gauged streamflow prediction, ungauged basin regionalization, and probabilistic streamflow estimation across North America.</p>",
+  "license": "mit",
+  "creators": [
+    {
+      "name": "Konapala, Goutam",
+      "affiliation": "Pacific Northwest National Laboratory"
+    },
+    {
+      "name": "Bracken, Cameron",
+      "affiliation": "Pacific Northwest National Laboratory"
+    },
+    {
+      "name": "Son, Youngjun",
+      "affiliation": "Pacific Northwest National Laboratory"
+    },
+    {
+      "name": "Birnbaum, Abigail",
+      "affiliation": "Pacific Northwest National Laboratory"
+    },
+    {
+      "name": "Giovando, Jeremy",
+      "affiliation": "Pacific Northwest National Laboratory"
+    },
+    {
+      "name": "Voisin, Nathalie",
+      "affiliation": "Pacific Northwest National Laboratory"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.24145836",
+      "relation": "isSupplementTo",
+      "resource_type": "dataset"
+    }
+  ],
+  "keywords": [
+    "hydrology",
+    "streamflow prediction",
+    "graph neural networks",
+    "LSTM",
+    "ungauged basins",
+    "uncertainty quantification",
+    "deep learning"
+  ]
+}
