@@ -1,0 +1,137 @@
+% Graph-in / graph-out architecture.
+% The river is never flattened into a CNN block.
+% LSTM is applied at each node. Directed GAT uses the same edges.
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage[active,tightpage]{preview}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,fit}
+
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{mute}{HTML}{4A4A4A}
+\definecolor{navy}{HTML}{16325C}
+\definecolor{link}{HTML}{2B6CB0}
+\definecolor{downc}{HTML}{C0392B}
+\definecolor{target}{HTML}{1F6B3A}
+\definecolor{gold}{HTML}{D4A017}
+\definecolor{teal}{HTML}{1A8A92}
+\definecolor{chip}{HTML}{F3F4F6}
+\definecolor{rule}{HTML}{8A93A0}
+\definecolor{panel}{HTML}{F7F8FA}
+\definecolor{grn}{HTML}{2E8B57}
+\definecolor{pur}{HTML}{6A3D96}
+
+% #1 prefix  #2 shift  #3 fill-style: open|state|updated
+\newcommand{\river}[3]{%
+  \begin{scope}[shift={#2}]
+    \coordinate (#1A) at (0.25,2.15);
+    \coordinate (#1B) at (1.55,2.45);
+    \coordinate (#1C) at (0.95,1.25);
+    \coordinate (#1D) at (2.20,1.70);
+    \coordinate (#1T) at (1.35,0.35);
+    \coordinate (#1E) at (0.15,0.05);
+    \coordinate (#1F) at (2.35,0.15);
+    \ifnum#3=2
+      \foreach \s/\t in {A/C,B/C,C/T,D/T,E/T,F/T}
+        \draw[link,line width=1.05pt,-{Latex[length=2.0mm]}] (#1\s) -- (#1\t);
+      \draw[downc,line width=0.9pt,-{Latex[length=1.8mm]}]
+        ($ (#1T)!0.22!(#1C) $) -- ($ (#1C)!0.18!(#1T) $);
+    \else
+      \foreach \s/\t in {A/C,B/C,C/T,D/T,E/T,F/T}
+        \draw[link,line width=0.9pt,-{Latex[length=1.9mm]}] (#1\s) -- (#1\t);
+    \fi
+    \foreach \p in {A,B,C,D,E,F} {
+      \ifnum#3=0
+        \fill[white] (#1\p) circle (0.12);
+        \draw[navy,line width=0.7pt] (#1\p) circle (0.12);
+      \else
+        \fill[gold!80] (#1\p) circle (0.12);
+        \draw[gold!50!black,line width=0.6pt] (#1\p) circle (0.12);
+      \fi
+    }
+    \ifnum#3=2
+      \fill[teal] (#1T) circle (0.155);
+      \draw[teal!50!black,line width=0.6pt] (#1T) circle (0.155);
+    \else
+      \fill[target] (#1T) circle (0.15);
+      \draw[target!60!black,line width=0.6pt] (#1T) circle (0.15);
+    \fi
+  \end{scope}
+}
+
+\begin{document}
+\begin{preview}
+\begin{tikzpicture}[font=\sffamily, >=Latex]
+
+% column frames
+\foreach \x in {0.05, 4.85, 9.65, 14.45} {
+  \draw[rule!60, fill=panel, rounded corners=5pt]
+    (\x,0.85) rectangle ++(4.55,6.85);
+}
+
+% ===== 1. Graph with features =====
+\node[font=\bfseries\footnotesize,ink] at (2.32,7.40) {Same river graph};
+\node[font=\scriptsize,mute] at (2.32,7.05) {features live on nodes};
+\river{g}{(0.85,2.55)}{0}
+\node[draw=rule,fill=white,rounded corners=2pt,font=\scriptsize,align=center]
+  at (2.32,2.15) {each node: 8 weather + 40 static};
+\node[font=\scriptsize,mute,align=center] at (2.32,1.45)
+  {links stay river links\\the graph is not flattened};
+
+% ===== 2. LSTM per node =====
+\node[font=\bfseries\footnotesize,ink] at (7.12,7.40) {LSTM at each node};
+\node[font=\scriptsize,mute] at (7.12,7.05) {no messages yet};
+\river{l}{(5.65,2.55)}{1}
+\draw[gold,line width=1.0pt] (6.15,5.55) -- (8.05,5.55);
+\foreach \x/\h in {6.15/0.14,6.50/0.24,6.85/0.10,7.20/0.30,7.55/0.18,7.90/0.12}
+  \fill[gold] (\x,5.55) rectangle ++(0.22,\h);
+\node[font=\tiny,mute] at (7.10,5.28) {one node's weather};
+\node[draw=rule,fill=white,rounded corners=2pt,font=\scriptsize,align=center]
+  at (7.12,2.15) {512 hidden $\times$ 3 layers};
+\node[font=\scriptsize,mute,align=center] at (7.12,1.45)
+  {365-day warmup, then 180-day\\prediction; dropout 0.2};
+
+% ===== 3. GAT on the same edges =====
+\node[font=\bfseries\footnotesize,ink] at (11.92,7.40) {Directed GAT on edges};
+\node[font=\scriptsize,mute] at (11.92,7.05) {graph is still the graph};
+\river{h}{(10.45,2.55)}{2}
+\node[font=\tiny,link] at (10.55,5.15) {up};
+\node[font=\tiny,downc] at (12.55,3.35) {down};
+\node[draw=rule,fill=white,rounded corners=2pt,font=\scriptsize,align=center]
+  at (11.92,2.15) {256 hidden $\times$ 3 $\cdot$ 4 heads};
+\node[font=\scriptsize,mute,align=center] at (11.92,1.45)
+  {LayerNorm, ReLU, dropout 0.2,\\residual; 6 edge features};
+
+% ===== 4. Heads read a node =====
+\node[font=\bfseries\footnotesize,ink] at (16.72,7.40) {Two heads, same node};
+\node[font=\scriptsize,mute] at (16.72,7.05) {concat local + graph state};
+\begin{scope}[shift={(14.70,3.35)}]
+  \fill[teal] (2.00,2.05) circle (0.17);
+  \node[font=\scriptsize\bfseries] at (2.00,2.48) {$[h^{0},h^{G}]$};
+  \draw[grn,line width=1.15pt,-{Latex}] (1.82,1.88) -- (0.85,0.85);
+  \draw[pur,line width=1.15pt,-{Latex}] (2.18,1.88) -- (3.15,0.85);
+  \node[draw=grn,fill=grn!12,rounded corners=3pt,font=\scriptsize\bfseries,
+        align=center,text width=1.85cm,minimum height=1.15cm]
+        at (0.55,0.15) {Softplus\\[1pt]$512\to128\to1$};
+  \node[draw=pur,fill=pur!10,rounded corners=3pt,font=\scriptsize\bfseries,
+        align=center,text width=1.85cm,minimum height=1.15cm]
+        at (3.45,0.15) {$K=3$\\[1pt]LogNormal};
+\end{scope}
+\node[font=\scriptsize,mute,align=center] at (16.72,1.45)
+  {point forecast and envelope\\7{,}586{,}305 + 66{,}953 params};
+
+% arrows between columns
+\foreach \x in {4.62, 9.42, 14.22}
+  \draw[ink,line width=1.15pt,-{Latex}] (\x,4.40) -- ++(0.20,0);
+
+% stage tags
+\node[font=\tiny\bfseries,mute] at (2.32,0.55) {1. encode time};
+\node[font=\tiny\bfseries,mute] at (7.12,0.55) {2. still local};
+\node[font=\tiny\bfseries,mute] at (11.92,0.55) {3. mix along the river};
+\node[font=\tiny\bfseries,mute] at (16.72,0.55) {4. read one node};
+
+\end{tikzpicture}
+\end{preview}
+\end{document}

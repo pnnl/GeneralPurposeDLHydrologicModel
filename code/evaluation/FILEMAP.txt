@@ -1,0 +1,32 @@
+Code-to-section map (Data / Methods / Evaluation)
+
+Data
+  standardize_streamflow.py          USGS/HYDAT/CONAGUA -> comid_*.parquet
+  ../downloadgagedata.py             area-ratio filter 0.7-1.3
+  catchmentforcings.py               raw WRF 6-hourly -> daily HRUID parquet
+  preprocess_forcings_hruid.py       parquet -> forcings.zarr / forcings_f16.zarr
+  extract_static_attributes.py       VIC + MERIT -> static parquet
+  train_multi_gpu_v20.py             DROP_FEATURES / LOG_TRANSFORM_FEATURES (40)
+
+Methodology
+  model_v15.py                       StreamflowGNN = LSTM + DirectedGAT
+  train_multi_gpu_v24.py             pretrain (temporal) then PUB finetune
+  train_multi_gpu_v15.py             SequenceDataModule, RollingKGELoss, directed edges
+  model_d2.py                        MixtureDensityHead, NLL / mean / PIT / CRPS
+  train_multi_gpu_d2.py              warmup -> pretrain -> PUB finetune [--freeze-trunk]
+  submit_v24.sh  submit_d2.sh        8 x H100 launchers
+
+Evaluation
+  inference_v24_v25.py               v24 Head 1 / Head 2 test parquets
+  evaluate_d2.py                     Head 3: KGE, PIT, peak bracketing, CRPS
+  build_3head_table.py               matched Table 1
+  plot_calibration_d2.py             reliability, PIT, CRPS
+  plot_spatial_d2_uq.py              spatial UQ on 630 holdouts
+  plot_spatial_kge.py                spatial KGE maps
+  make_three_stage_figure.py         three-task schematic
+
+Official numbers
+  three_head_table.csv
+  eval_d2_finetune_frozen_heldout_test.summary.json
+  eval_d2_finetune_heldout_test.summary.json
+  checkpoints_v24/finetune/split_metadata.json
