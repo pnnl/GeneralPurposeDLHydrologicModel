@@ -1,7 +1,7 @@
 {
   "upload_type": "software",
   "title": "GeneralPurposeDLHydrologicModel: Shared Graph-Recurrent Deep Learning Hydrologic Model",
-  "description": "<p>Training, evaluation, standalone baseline, and figure-generation source code for GeneralPurposeDLHydrologicModel, a graph-recurrent deep learning framework (LSTM + DirectedGAT + Mixture Density Network) for daily gauged streamflow prediction, ungauged basin regionalization, and probabilistic streamflow estimation across North America.</p>",
+  "description": "<p>Training, evaluation, standalone baseline, and figure-generation source code and pretrained model checkpoints for GeneralPurposeDLHydrologicModel, a graph-recurrent deep learning framework (LSTM + DirectedGAT + Mixture Density Network) for daily gauged streamflow prediction, ungauged basin regionalization, and probabilistic streamflow estimation across North America.</p>",
   "license": "mit",
   "creators": [
     {

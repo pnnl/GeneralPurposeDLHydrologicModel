@@ -6,8 +6,8 @@ __pycache__/
 logs/
 outputs/
 data/
-weights/
 *.pt
+!weights/**/*.pt
 *.parquet
 *.zarr/
 *.gpkg

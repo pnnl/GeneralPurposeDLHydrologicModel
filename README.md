@@ -21,7 +21,7 @@ GeneralPurposeDLHydrologicModel/
 │   ├── standalone/     # Independently trained baseline models for comparison
 │   └── figures/        # Visualization, spatial mapping, and summary table scripts
 ├── data/               # Input datasets from the companion Zenodo archive (placed locally)
-├── weights/            # Pretrained model checkpoints from the companion archive (placed locally)
+├── weights/            # Pretrained deterministic and probabilistic model checkpoints
 └── LICENSE
 ```
 
@@ -31,7 +31,7 @@ All scripts resolve paths relative to the repository root (`code/training/config
 
 ## Data and Pretrained Weights Setup
 
-Processed input datasets (`data/`) and pretrained model checkpoints (`weights/`) are publicly archived on Zenodo at **[https://doi.org/10.5281/zenodo.24145836](https://doi.org/10.5281/zenodo.24145836)**. Download and place `data/` and `weights/` at the root of this repository alongside `code/` before running training or evaluation.
+Pretrained model checkpoints (`weights/`) are included directly in this repository. Processed input datasets (`data/`) are publicly archived on Zenodo at **[https://doi.org/10.5281/zenodo.24145836](https://doi.org/10.5281/zenodo.24145836)**; download and place `data/` at the root of this repository alongside `code/` and `weights/` before running training or evaluation.
 
 ### Expected `data/` Layout
 
