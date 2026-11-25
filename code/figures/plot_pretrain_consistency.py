@@ -78,7 +78,7 @@ def consistency_maps(pair):
         float(lat[ok].min() - 1.0), float(lat[ok].max() + 1.0),
     ]
     rows = [
-        ("mae_norm", "distance to time-series series",
+        ("mae_norm", "distance to time-series checkpoint",
          LogNorm(vmin=0.08, vmax=2.0), (0.08, 2.0),
          [0.08, 0.2, 0.5, 1, 2], "Mean absolute difference / mean flow"),
     ]
