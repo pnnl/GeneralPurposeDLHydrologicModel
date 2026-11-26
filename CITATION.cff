@@ -3,6 +3,7 @@ message: "If you use this software, please cite it using the metadata below."
 type: software
 title: "GeneralPurposeDLHydrologicModel: Shared Graph-Recurrent Deep Learning Hydrologic Model"
 version: 1.0.0
+doi: 10.5281/zenodo.24537362
 license: MIT
 repository-code: "https://github.com/pnnl/GeneralPurposeDLHydrologicModel"
 authors:

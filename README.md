@@ -1,6 +1,7 @@
 # General-Purpose Deep Learning Hydrologic Model
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24145836.svg)](https://doi.org/10.5281/zenodo.24145836)
+[![Software DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24537362.svg)](https://doi.org/10.5281/zenodo.24537362)
+[![Dataset DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24145836.svg)](https://doi.org/10.5281/zenodo.24145836)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A graph-based deep learning framework for daily streamflow prediction and uncertainty quantification across North American river basins. The model combines a Long Short-Term Memory (**LSTM**) sequence encoder with a Directed Graph Attention Network (**DirectedGAT**) that routes information downstream along river networks, supporting:
