@@ -215,7 +215,7 @@ def draw_row(axes_row, df, grp_col, row_label, kind="box", bounds=None,
             fontsize=tick_size,
             rotation=tick_rotation,
             ha="center",
-            va="top" if tick_rotation else "center",
+            va="top",
         )
         ax.tick_params(labelsize=tick_size)
         if ref is not None:
@@ -277,11 +277,11 @@ def main():
             ax.set_title(title, fontsize=16.6, pad=4)
             # Class names are wider than the column, so the tick line is
             # smaller than the axis title. The sample size stays on its own line.
-            ax.tick_params(axis="x", labelsize=8.6)
+            ax.tick_params(axis="x", labelsize=8.6, pad=3)
             for lab in ax.get_xticklabels():
                 lab.set_fontsize(8.6)
-    fig.subplots_adjust(left=0.10, right=0.99, top=0.96, bottom=0.045,
-                        wspace=0.42, hspace=0.48)
+    fig.subplots_adjust(left=0.10, right=0.99, top=0.96, bottom=0.055,
+                        wspace=0.42, hspace=0.52)
     fig.savefig(FIG_DIR / "hydroclimate_stratified_performance.pdf")
     plt.close(fig)
     print(f"wrote {FIG_DIR/'hydroclimate_stratified_performance.pdf'}")

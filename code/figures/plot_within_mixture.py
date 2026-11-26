@@ -155,7 +155,7 @@ def cdf_grid(pair, panels, name, ncol=2):
         ax.spines["right"].set_visible(False)
         # The width panel is open at the upper right. "best" puts the
         # legend on the axis label there.
-        loc = "upper right" if column == "mae_to_median_over_width" else "best"
+        loc = (0.44, 0.32) if column == "mae_to_median_over_width" else "best"
         ax.legend(frameon=False, loc=loc, fontsize=8.5)
         ax.text(0.98, 0.04, tag, transform=ax.transAxes, ha="right")
         notes[column] = {
